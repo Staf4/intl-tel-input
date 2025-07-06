@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - Демонстрация функционала</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <div class="loading-screen">
+            <div class="loading-content">
+                <div class="ai-logo">🤖</div>
+                <h1>AI Assistant</h1>
+                <p>Загружаем демонстрацию функционала...</p>
+                <div class="loading-bar">
+                    <div class="loading-progress"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для информации -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>🤖 О демонстрации</h2>
+            <div class="info-content">
+                <h3>Что демонстрирует этот проект:</h3>
+                <ul>
+                    <li><strong>Создание полноценного веб-приложения</strong> с нуля</li>
+                    <li><strong>Интерактивные графики</strong> с использованием Chart.js</li>
+                    <li><strong>Адаптивный дизайн</strong> с современными CSS-технологиями</li>
+                    <li><strong>Генерация и обработка данных</strong> в JavaScript</li>
+                    <li><strong>Фильтрация и поиск</strong> в таблицах</li>
+                    <li><strong>Экспорт данных</strong> в JSON формате</li>
+                </ul>
+                
+                <h3>Технологии:</h3>
+                <div class="tech-stack">
+                    <span class="tech-badge">HTML5</span>
+                    <span class="tech-badge">CSS3</span>
+                    <span class="tech-badge">JavaScript ES6+</span>
+                    <span class="tech-badge">Chart.js</span>
+                    <span class="tech-badge">CSS Grid</span>
+                    <span class="tech-badge">Flexbox</span>
+                </div>
+                
+                <h3>Функциональность:</h3>
+                <ul>
+                    <li>Динамическое создание компонентов</li>
+                    <li>Обработка событий пользователя</li>
+                    <li>Асинхронная загрузка данных</li>
+                    <li>Responsive дизайн</li>
+                    <li>Анимации и переходы</li>
+                </ul>
+                
+                <div class="author-info">
+                    <p><strong>Создано AI-помощником</strong> для демонстрации возможностей в веб-разработке</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Кнопка информации -->
+    <button id="infoButton" class="info-button" title="Информация о проекте">
+        <span>ℹ️</span>
+    </button>
+
+    <!-- Переключатель темы -->
+    <button id="themeToggle" class="theme-toggle" title="Сменить тему">
+        <span class="theme-icon">🌙</span>
+    </button>
+
+    <!-- Скрипты -->
+    <script src="../src/web_components.js"></script>
+    <script>
+        // Инициализация дополнительных функций
+        document.addEventListener('DOMContentLoaded', () => {
+            // Удаляем экран загрузки
+            setTimeout(() => {
+                const loadingScreen = document.querySelector('.loading-screen');
+                if (loadingScreen) {
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingScreen.remove();
+                    }, 500);
+                }
+            }, 2000);
+
+            // Модальное окно
+            const modal = document.getElementById('infoModal');
+            const infoButton = document.getElementById('infoButton');
+            const closeButton = document.querySelector('.close');
+
+            infoButton.addEventListener('click', () => {
+                modal.style.display = 'block';
+            });
+
+            closeButton.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Переключатель темы
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.querySelector('.theme-icon');
+            
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-theme');
+                const isDark = document.body.classList.contains('dark-theme');
+                themeIcon.textContent = isDark ? '☀️' : '🌙';
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+
+            // Загрузка сохраненной темы
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-theme');
+                themeIcon.textContent = '☀️';
+            }
+
+            // Добавляем эффекты при скролле
+            let lastScrollTop = 0;
+            const header = document.querySelector('.dashboard-header');
+            
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > lastScrollTop && scrollTop > 100) {
+                    header.style.transform = 'translateY(-100%)';
+                } else {
+                    header.style.transform = 'translateY(0)';
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+
+            // Анимация появления карточек
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Наблюдаем за появлением элементов
+            document.querySelectorAll('.stat-card, .chart-container').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+
+            // Добавляем клавиатурные сокращения
+            document.addEventListener('keydown', (e) => {
+                // Ctrl + R для обновления данных
+                if (e.ctrlKey && e.key === 'r') {
+                    e.preventDefault();
+                    document.getElementById('refreshData').click();
+                }
+                
+                // Ctrl + E для экспорта
+                if (e.ctrlKey && e.key === 'e') {
+                    e.preventDefault();
+                    document.getElementById('exportData').click();
+                }
+                
+                // Escape для закрытия модального окна
+                if (e.key === 'Escape' && modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Добавляем тултипы
+            document.querySelectorAll('[title]').forEach(element => {
+                element.addEventListener('mouseenter', showTooltip);
+                element.addEventListener('mouseleave', hideTooltip);
+            });
+
+            function showTooltip(e) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = e.target.title;
+                tooltip.style.left = e.pageX + 10 + 'px';
+                tooltip.style.top = e.pageY + 10 + 'px';
+                document.body.appendChild(tooltip);
+                
+                // Очищаем title чтобы не показывать стандартный тултип
+                e.target.setAttribute('data-title', e.target.title);
+                e.target.title = '';
+            }
+
+            function hideTooltip(e) {
+                const tooltip = document.querySelector('.tooltip');
+                if (tooltip) {
+                    tooltip.remove();
+                }
+                // Возвращаем title
+                if (e.target.getAttribute('data-title')) {
+                    e.target.title = e.target.getAttribute('data-title');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
